@@ -7,7 +7,8 @@ module SmarterCSV
     default_options = {:col_sep => ',' , :row_sep => $/ , :quote_char => '"', :force_simple_split => false , :verbose => false ,
       :remove_empty_values => true, :remove_zero_values => false , :remove_values_matching => nil , :remove_empty_hashes => true , :strip_whitespace => true,
       :convert_values_to_numeric => true, :strip_chars_from_headers => nil , :user_provided_headers => nil , :headers_in_file => true,
-      :comment_regexp => /^#/, :chunk_size => nil , :key_mapping_hash => nil , :downcase_header => true, :strings_as_keys => false, :file_encoding => 'utf-8'
+      :comment_regexp => /^#/, :chunk_size => nil , :key_mapping_hash => nil , :downcase_header => true, :strings_as_keys => false, :file_encoding => 'utf-8',
+      :skip_rows => 0
     }
     options = default_options.merge(options)
     csv_options = options.select{|k,v| [:col_sep, :row_sep, :quote_char].include?(k)} # options.slice(:col_sep, :row_sep, :quote_char)
@@ -18,6 +19,10 @@ module SmarterCSV
     begin
       $/ = options[:row_sep]
       f = input.respond_to?(:readline) ? input : File.open(input, "r:#{options[:file_encoding]}")
+
+      options[:skip_rows].times do
+        f.readline(options[:row_sep])
+      end
 
       if options[:headers_in_file]        # extract the header line
         # process the header line in the CSV file..
@@ -35,7 +40,7 @@ module SmarterCSV
         file_headerA.map!{|x| x.gsub(/\s+/,'_')}
         file_headerA.map!{|x| x.downcase }   if options[:downcase_header]
 
-#        puts "HeaderA: #{file_headerA.join(' , ')}" if options[:verbose]
+        puts "HeaderA: #{file_headerA.join(' , ')}" if options[:verbose]
 
         file_header_size = file_headerA.size
       end

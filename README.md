@@ -155,6 +155,7 @@ The options and the block are optional.
      | :force_simple_split         |   false  | force simiple splitting on :col_sep character for non-standard CSV-files.            |
      |                             |          | e.g. when :quote_char is not properly escaped                                        |
      | :verbose                    |   false  | print out line number while processing (to track down problems in input files)       |
+     | :skip_rows                  |   0      | Number of rows at beginning of file to skip before processing                        |
 
 
 #### NOTES about CSV Headers:
